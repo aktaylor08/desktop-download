@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 # encoding: utf-8
 import sys
-sys.path.append('/usr/local/lib/python2.7/site-packages')                                                    
+#sys.path.append('/usr/local/lib/python3.7/site-packages')                                                    
 
 import praw
+import time
 import pprint
 import os
 import requests
@@ -41,7 +42,7 @@ for i in submissions:
 
     #if the top usable post is what we are already using break
 if i.id == current:
-    print 'same as current'
+    print time.ctime(), 'same as current'
     sys.exit(0)
 else:
     #remove the old one
@@ -56,3 +57,4 @@ image.save(loc,  "JPEG")
 
 #write out the current
 open(DESKTOP_DIR + '.current', 'w').write(i.id)    
+print time.ctime(), 'changed to ', title
