@@ -42,12 +42,12 @@ for i in submissions:
 
     #if the top usable post is what we are already using break
 if i.id == current:
-    print time.ctime(), 'same as current'
     sys.exit(0)
 else:
     #remove the old one
     if current is not None:
-        os.remove(DESKTOP_DIR + current + '.jpg')
+        if os.path.isfile( DESKTOP_DIR + current + '.jpg'):
+            os.remove(DESKTOP_DIR + current + '.jpg')
         
 #save the image
 req = requests.get(link)
