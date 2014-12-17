@@ -1,18 +1,17 @@
 #!/usr/bin/env python
 # encoding: utf-8
 import sys
-#sys.path.append('/usr/local/lib/python3.7/site-packages')                                                    
+
+import subprocess
 
 import praw
 import time
-import pprint
 import os
 import requests
 from PIL import Image
 from StringIO import StringIO
-from StringIO import StringIO
 
-DESKTOP_DIR = '/Users/ataylor/Pictures/desktop/'
+DESKTOP_DIR = '/home/ataylor/Pictures/desktop/'
 
 #get the current info file if it exists
 info_file = DESKTOP_DIR + '.current'
@@ -42,7 +41,8 @@ for i in submissions:
 
     #if the top usable post is what we are already using break
 if i.id == current:
-    sys.exit(0)
+    print("Already there")
+    #sys.exit(-1)
 else:
     #remove the old one
     if current is not None:
@@ -56,5 +56,16 @@ loc = DESKTOP_DIR + sub_id + '.jpg'
 image.save(loc,  "JPEG")
 
 #write out the current
-open(DESKTOP_DIR + '.current', 'w').write(i.id)    
+open(DESKTOP_DIR + '.current', 'w').write(i.id)
+pid = subprocess.check_output(["pgrep", "gnome-session"])
+pid = pid.lstrip().rstrip()
+dbus_address = subprocess.check_output(["grep", "-z", "DBUS_SESSION_BUS_ADDRESS", "/proc/{:s}/environ".format(pid), ])#"|", "-d=" ])
+dbus_address = '='.join(dbus_address.split('=')[1:])
+dbus_address = dbus_address.encode('string-escape')
+
+os.environ["DBUS_SESSION_BUS_ADDRESS"] = dbus_address.lstrip().strip()
+
+
+
+out = subprocess.check_output(["gsettings", "set", "org.gnome.desktop.background", "picture-uri", "file://{:s}".format(loc)])
 print time.ctime(), 'changed to ', title
